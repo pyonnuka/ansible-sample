@@ -1,0 +1,16 @@
+- name: install MySQL
+  yum: name={{ item }} state=present
+  with_items:
+    - mysql-server
+    - mysql-devel
+  sudo: true
+  tags:
+    - mysql
+    - install
+
+- name: Start MySQL service
+  action: service name=mysqld state=started
+  sudo: true
+  tags:
+    - mysql
+    - install

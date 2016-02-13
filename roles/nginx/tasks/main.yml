@@ -1,0 +1,41 @@
+- name: Make directory for build files
+  command: mkdir -p /usr/local/src
+  ignore_errors: yes
+
+- name: Install nginx
+  get_url: url=http://nginx.org/download/nginx-1.9.9.tar.gz dest=/usr/local/src
+  sudo: true
+
+- name: Unzip nginx
+  command: tar xvf nginx-1.9.9.tar.gz chdir=/usr/local/src
+  sudo: true
+
+- name: Install liblary
+  yum:  name={{item}} state=latest
+  sudo: true
+  with_items:
+    - pcre
+    - pcre-devel
+    - openssl
+    - openssl-devel
+    - zlib
+    - zlib-devel
+
+- name: Setting nginx
+  command: ./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --with-http_gzip_static_module --with-http_ssl_module --with-http_v2_module --with-http_stub_status_module  chdir=/usr/local/src/nginx-1.9.9
+  sudo: true
+
+- name: Build nginx
+  command: make chdir=/usr/local/src/nginx-1.9.9
+  command: make install chdir=/usr/local/src/nginx-1.9.9
+  sudo: true
+
+- name: Copy nginx conf file
+  template:
+    src=nginx.conf.j2
+    dest=/usr/local/nginx/conf/default.conf
+  sudo: true
+
+- name: Starting nginx service
+  command: nginx
+  sudo: true

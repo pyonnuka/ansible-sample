@@ -1,0 +1,39 @@
+- name: install build depends by Ruby
+  yum: name={{ item }} state=present
+  with_items:
+    - gcc
+    - openssl-devel
+    - libyaml-devel
+    - readline-devel
+    - zlib-devel
+    - git
+  sudo: true
+  tags:
+    - ruby
+    - ruby:install
+    - install
+
+- name: check ruby rbenv installed
+  shell: cd; bash -lc "rbenv versions | grep {{ ruby_version }} | tr '*' ' ' | sed -e 's/\s\+//' | cut -f1 -d' '"
+  register: ruby_installed
+  ignore_errors: yes
+  tags:
+    - ruby
+    - ruby:install
+    - install
+
+- name: rbenv install {{ ruby_version }}
+  command: rbenv install {{ ruby_version }}
+  when: ruby_installed.stdout != ruby_version
+  tags:
+    - ruby
+    - ruby:install
+    - install
+
+- name: rbenv global {{ ruby_version }}
+  command: rbenv global {{ ruby_version }}
+  when: ruby_installed.stdout != ruby_version
+  tags:
+    - ruby
+    - ruby:install
+    - install

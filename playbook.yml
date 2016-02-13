@@ -1,0 +1,9 @@
+- hosts: webservers
+  roles:
+    - common
+    - ruby
+    - rails
+    - nginx
+  vars:
+    ruby_version: 2.1.1
+    rails_version: 4.2.5

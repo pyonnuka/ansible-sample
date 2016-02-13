@@ -1,0 +1,15 @@
+- name: check Rails installed
+  shell: rails -v | cut -f 2 -d ' '
+  register: rails_installed
+  ignore_errors: yes
+  tags:
+    - ruby
+    - ruby:install
+    - install
+
+- name: gem install rails -v {{ rails_version }}
+  command: gem install rails -v {{ rails_version }}
+  when: rails_installed.stdout != rails_version
+  tags:
+    - rails
+    - install
